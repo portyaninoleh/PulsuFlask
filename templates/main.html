@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pulsu Test Task</title>
+    <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
+    <link rel="stylesheet" media="screen" href="http://handsontable.com/dist/jquery.handsontable.full.css">
+    <link rel="stylesheet" media="screen" href="http://handsontable.com/demo/css/samples.css">
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-2.0.3.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/custom.js') }}"></script>
+    <script type="text/javascript" src="http://cdn.ihwy.net/ihwy-com/labs/jquery-listnav/2.1/jquery.listnav-2.1.js"></script>
+    <script src="http://handsontable.com/dist/jquery.handsontable.full.js"></script>
+</head>
+<body>
+<div class="row">
+    <div class="col-md-offset-4 col-md-4" id="InputValues">
+        <h2 class="text-center">Please enter the number of rows and columns</h2>
+        <div class="form-group">
+            <label for='RowsNumber'>Rows Number</label>
+            <input class="form-control" id="RowsNumber" value="4"/>
+            <p class="text-muted">Minimal value is 4</p>
+            <label for='ColumnsNumber'>Columns Number</label>
+            <input class="form-control" id="ColumnsNumber" value="6"/>
+            <p class="text-muted">Minimal value is 6</p>
+            <button type="button" class="btn btn-default" onclick="Core.CheckInputData()">Accept</button>
+        </div>
+        <div class="alert alert-danger hidden">You entered wrong number of rows/columns</div>
+    </div>
+</div>
+<div class="handsontable" id="DataTableDiv"></div>
+<button type="button" class="btn btn-default" onclick="Core.SendData()">Evaluate</button>
+</body>
+</html>
