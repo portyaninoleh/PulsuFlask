@@ -24,10 +24,11 @@
             <p class="text-muted">Minimal value is 6</p>
             <button type="button" class="btn btn-default" onclick="Core.CheckInputData()">Accept</button>
         </div>
-        <div class="alert alert-danger hidden">You entered wrong number of rows/columns</div>
+        <div class="alert alert-danger hidden" id="WrongNumber">You entered wrong number of rows/columns</div>
     </div>
 </div>
 <div class="handsontable" id="DataTableDiv"></div>
 <button type="button" class="btn btn-default" onclick="Core.SendData()">Evaluate</button>
+<div class="alert alert-danger hidden" id="InvalidValues"></div>
 </body>
 </html>

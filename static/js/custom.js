@@ -4,7 +4,8 @@ Core = {
     Init: function(){
         $("#InputValues").removeClass('hidden');
         $("#DataTable").addClass('hidden');
-        Core.DrawTable(rows, cols);
+        Core.MakeData(rows, cols);
+        Core.DrawTable(data);
     },
 
     // Check the count of cols, rows
@@ -12,17 +13,16 @@ Core = {
         rows = parseInt($("#RowsNumber").val());
         cols = parseInt($("#ColumnsNumber").val());
         if(!rows || !cols || rows < 4 || cols < 6){
-            $(".alert").removeClass('hidden');
+            $("#WrongNumber").removeClass('hidden');
             return
         }
-        else $(".alert").addClass('hidden');
-        Core.rows = rows;
-        Core.cols = cols;
-        Core.DrawTable(Core.rows, Core.cols);
+        else $("#WrongNumber").addClass('hidden');
+        data = [];
+        Core.DrawTable(rows, cols);
     },
 
-    // Fill in the table
-    DrawTable: function(){
+    // Fill in the table data
+    MakeData: function(rows, cols){
         var data_cols = [];
         for(var i = 0; i < rows; i++){
             for(var j = 0; j < cols; j++){
@@ -31,17 +31,24 @@ Core = {
             data.push(data_cols);
             data_cols = [];
         }
+    },
+    DrawTable: function(data){
         $("#DataTableDiv").handsontable({
                 data: data,
                 minSpareRows: 1,
                 colHeaders: true,
                 rowHeaders: true,
+                minRows: 4,
+                minCols: 6,
+                maxRows: rows,
+                maxCols: cols,
                 contextMenu: true
         });
     },
 
     // Send data to the server
     SendData: function(){
+        $("#InvalidValues").addClass('hidden');
         var header_table = $('table > thead > tr > th > div > span');
         var header = [];
         for(var i = 0; i < cols; i++){
@@ -52,8 +59,15 @@ Core = {
             type: 'POST',
             dataType: 'JSON',
             data: 'data=' + JSON.stringify(data) + '&head=' + JSON.stringify(header),
-            success: function(data){
-                alert(data);
+            success: function(result){
+                if(result.error){
+                    $("#InvalidValues").html(result.error).removeClass('hidden');
+                    return;
+                }
+                for(var i = 0; i < data.length; i++){
+                    data[i][data[i].length] = result.result[i];
+                }
+                Core.DrawTable(data);
             }
         });
     }
