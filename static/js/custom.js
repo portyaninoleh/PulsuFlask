@@ -64,7 +64,7 @@ Core = {
             url: '/',
             type: 'POST',
             dataType: 'json',
-            data: 'data=' + JSON.stringify(data).replace('+', '%2B') + '&head=' + JSON.stringify(header),
+            data: 'data=' + JSON.stringify(data).split('+').join('%2B') + '&head=' + JSON.stringify(header),
             success: function(result){
                 if(result.error){
                     $("#InvalidValues").html(result.error).removeClass('hidden');
