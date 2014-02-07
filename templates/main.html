@@ -3,13 +3,12 @@
 <head>
     <title>Pulsu Test Task</title>
     <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
-    <link rel="stylesheet" media="screen" href="http://handsontable.com/dist/jquery.handsontable.full.css">
-    <link rel="stylesheet" media="screen" href="http://handsontable.com/demo/css/samples.css">
+    <link rel="stylesheet" media="screen" href="{{ url_for('static', filename='css/jquery.handsontable.full.css') }}">
     <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-2.0.3.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/custom.js') }}"></script>
-    <script type="text/javascript" src="http://cdn.ihwy.net/ihwy-com/labs/jquery-listnav/2.1/jquery.listnav-2.1.js"></script>
-    <script src="http://handsontable.com/dist/jquery.handsontable.full.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.list.nav.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.handsontable.full.js') }}"></script>
 </head>
 <body>
 <div class="row">

@@ -18,20 +18,25 @@ Core = {
         }
         else $("#WrongNumber").addClass('hidden');
         data = [];
-        Core.DrawTable(rows, cols);
+        Core.MakeData(rows, cols);
+        Core.DrawTable(data);
     },
 
     // Fill in the table data
     MakeData: function(rows, cols){
         var data_cols = [];
+        var temp_data = data;
+        data = [];
         for(var i = 0; i < rows; i++){
             for(var j = 0; j < cols; j++){
-                data_cols.push(' ');
+                data_cols.push(temp_data.length?temp_data[i][j]:'');
             }
             data.push(data_cols);
             data_cols = [];
         }
     },
+
+    // Draw the table
     DrawTable: function(data){
         $("#DataTableDiv").handsontable({
                 data: data,
@@ -48,6 +53,7 @@ Core = {
 
     // Send data to the server
     SendData: function(){
+        Core.MakeData(rows, cols);
         $("#InvalidValues").addClass('hidden');
         var header_table = $('table > thead > tr > th > div > span');
         var header = [];
@@ -57,13 +63,15 @@ Core = {
         $.ajax({
             url: '/',
             type: 'POST',
-            dataType: 'JSON',
-            data: 'data=' + JSON.stringify(data) + '&head=' + JSON.stringify(header),
+            dataType: 'json',
+            data: 'data=' + JSON.stringify(data).replace('+', '%2B') + '&head=' + JSON.stringify(header),
             success: function(result){
                 if(result.error){
                     $("#InvalidValues").html(result.error).removeClass('hidden');
                     return;
                 }
+                Core.MakeData(rows, cols);
+                Core.DrawTable(data);
                 for(var i = 0; i < data.length; i++){
                     data[i][data[i].length] = result.result[i];
                 }

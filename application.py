@@ -9,24 +9,27 @@ def validate(data):
     string_val = 0
     for i in range(len(data.data)):
         for j in range(len(data.data[i])):
-            data.data[i][j].strip()
             if data.data[i][j]:
+                data.data[i][j].strip()
                 if data.data[i][j].startswith("'"):
                     if not string_val:
                         string_val += 1
+                        data.result[i] = data.data[i][j].strip("'")
                     else:
                         data.result[i] = 'Unsupported operation for string type'
                 elif data.data[i][j].startswith('='):
-                    data.data[i][j] = eval(data.data[i][j].strip('='))
+                    data.data[i][j] = unicode(eval(data.data[i][j].strip('=')))
                 elif not re.match(r'^([0-9]+)$', data.data[i][j]):
-                    data.result[i] = 'Unsupported value of number'
+                    data.result[i] = 'Unsupported value of cell'
     return data
+
 
 def evaluate_data(data):
     for i in range(len(data.data)):
-        if not data.result[i]:
+        if not i in data.result.keys():
             try:
-                data.result[i] = eval(''.join(data.data[i]))
+                eval_data = ''.join(data.data[i])
+                data.result[i] = eval(eval_data) if eval_data else ''
             except Exception, e:
                 data.result[i] = unicode(e)
     return data.result
