@@ -1,10 +1,14 @@
 from flask import Flask, render_template, request, jsonify
 from models import Spreadsheet
-from main_types import StringType
+from main_types import StringType, ErrorType
 
 app = Flask(__name__)
 
+
 def evaluate_string(data_string):
+    for i in data_string:
+        if isinstance(i, ErrorType):
+            return "Wrong value of the cell"
     joined_string = u''.join([j.get_value for j in data_string])
     string_cells = [i for i in data_string if isinstance(i, StringType)]
     if not joined_string:
@@ -27,8 +31,6 @@ def evaluate():
             data = Spreadsheet(request.values)
         except RuntimeError:
             return jsonify(error = "You have linked cells to each other. Please refresh the table")
-        # if isinstance(data, unicode):
-        #     return jsonify(error = data)
         for i in range(len(data.data)):
             try:
                 data.result[i] = evaluate_string(data.data[i])
