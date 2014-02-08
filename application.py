@@ -1,57 +1,40 @@
 from flask import Flask, render_template, request, jsonify
 from models import Spreadsheet
-import re, json
+from main_types import StringType
 
 app = Flask(__name__)
 
-
-def validate(data):
-    for i in range(len(data.data)):
-        string_val = 0
-        for j in range(len(data.data[i])):
-            if data.data[i][j]:
-                if data.data[i][j].startswith("'"):
-                    if not string_val:
-                        string_val += 1
-                        data.result[i] = data.data[i][j][1:]
-                    else:
-                        data.error[i] = 'Unsupported operation for string type'
-                elif re.match(r'^=(\+|\-|\*|\/)$', data.data[i][j]):
-                    data.data[i][j] = unicode(data.data[i][j][1:])
-                elif re.match(r'^=([0-9]+)', data.data[i][j]):
-                    try:
-                        data.data[i][j] = unicode(eval(data.data[i][j][1:]))
-                    except Exception:
-                        data.error[i] = 'Unsupported expression'
-                elif not re.match(r'[0-9]+', data.data[i][j]):
-                    data.error[i] = 'Unsupported value of cell'
-    return data
-
-
-def evaluate_data(data):
-    for i in range(len(data.data)):
-        if i not in data.error.keys():
-            try:
-                eval_data = ''.join(data.data[i])
-                if not eval_data.startswith("'"): data.result[i] = eval(eval_data) if eval_data else ''
-            except Exception:
-                data.result[i] = unicode('You have an error in the string. Please check it.')
+def evaluate_string(data_string):
+    joined_string = u''.join([j.get_value for j in data_string])
+    string_cells = [i for i in data_string if isinstance(i, StringType)]
+    if not joined_string:
+        return joined_string
+    if [i for i in data_string if i.get_value.startswith('-')]:
+        return 'Unsupported value of number'
+    if string_cells:
+        if len([i for i in data_string if i.get_value]) > 1:
+            return 'Unsupported operation for string type'
         else:
-            data.result[i] = data.error[i]
-    return data.result
+            return string_cells[0].get_value
+    else:
+        return eval(joined_string)
 
 
 @app.route("/", methods=['GET', 'POST'])
 def evaluate():
     if request.method == 'POST':
-        data = Spreadsheet(request.values)
-        if not data.unlinked:
-            return jsonify(error = data.fata_error)
         try:
-            data = validate(data)
-        except Exception, e:
-            return jsonify(error = unicode(e))
-        return jsonify(result = evaluate_data(data))
+            data = Spreadsheet(request.values)
+        except RuntimeError:
+            return jsonify(error = "You have linked cells to each other. Please refresh the table")
+        # if isinstance(data, unicode):
+        #     return jsonify(error = data)
+        for i in range(len(data.data)):
+            try:
+                data.result[i] = evaluate_string(data.data[i])
+            except Exception:
+                data.result[i] = 'You have an error in your string'
+        return jsonify(result = data.result)
     return render_template('main.html')
 
 if __name__ == '__main__':

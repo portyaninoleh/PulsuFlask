@@ -40,14 +40,14 @@ Core = {
     DrawTable: function(data){
         $("#DataTableDiv").handsontable({
                 data: data,
-                minSpareRows: 1,
+//                minSpareRows: 1,
                 colHeaders: true,
                 rowHeaders: true,
                 minRows: 4,
                 minCols: 6,
                 maxRows: rows,
-                maxCols: cols,
-                contextMenu: true
+                maxCols: cols
+//                contextMenu: true
         });
     },
 
